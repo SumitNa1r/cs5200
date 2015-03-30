@@ -21,10 +21,10 @@ public class castManager {
 			+ " VALUES (?,?,?);";
 	String read_all = "select * from cast";
 	String read_for_actor = "select * from cast where actor_id = ?;";
-	String read_for_movie = "select * from comment where movie_id = ?;";
-	String read_for_id = "select * from comment where id = ?;";
-	String update_cast = "update comment set actor_id = ?, movie_id = ?, character_name = ? where id = ?";
-	String delete_cast = "delete from comment where id = ?";
+	String read_for_movie = "select * from cast where movie_id = ?;";
+	String read_for_id = "select * from cast where id = ?;";
+	String update_cast = "update cast set actor_id = ?, movie_id = ?, character_name = ? where id = ?";
+	String delete_cast = "delete from cast where id = ?";
 	
 	public void updateComment(int cid, cast c)
 	{
