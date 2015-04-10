@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
@@ -47,6 +48,21 @@ public class regusersDAO {
 		
 	}
 	
+	private boolean isValidUser(String uname, String pwd){
+		Query query = em.createQuery("select r from regusers r where r.username = :uname and r.password = :pwd");
+		query.setParameter("uname", uname);
+		query.setParameter("pwd", pwd);
+		regusers r = new regusers();
+		try{
+			r = (regusers) query.getSingleResult();
+		}
+		catch (NoResultException nre){
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public static void main (String args[]) throws IOException
 	{
 		regusersDAO dao = new regusersDAO();
@@ -75,8 +91,8 @@ public class regusersDAO {
 		dao.updateRegUsers(r);
 		*/
 		
-		dao.deleteUser("sum");
-		
+		//dao.deleteUser("sum");
+		System.out.println(dao.isValidUser("sum", "sum"));
 	}
 
 }
