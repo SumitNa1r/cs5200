@@ -7,7 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class comment {
+public class comment_author {
 
 	@Id
 	private int id;
@@ -15,16 +15,17 @@ public class comment {
 	private String comments;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="username")
-	private regusers users;
+	@JoinColumn(name="user")
+	private regusers usr;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="book_id")
-	private book bks;
-	public comment() {
+	@JoinColumn(name="author")
+	private author author;
+	
+	public comment_author() {
 		super();
 	}
-	public comment(int id, String time, String comments) {
+	public comment_author(int id, String time, String comments) {
 		super();
 		this.id = id;
 		this.time = time;
@@ -48,17 +49,16 @@ public class comment {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public regusers getUsers() {
-		return users;
+	public regusers getUsr() {
+		return usr;
 	}
-	public void setUsers(regusers users) {
-		this.users = users;
+	public void setUsr(regusers usr) {
+		this.usr = usr;
 	}
-	public book getBks() {
-		return bks;
+	public author getAuthor() {
+		return author;
 	}
-	public void setBks(book bks) {
-		this.bks = bks;
+	public void setAuthor(author author) {
+		this.author = author;
 	}
-		
 }

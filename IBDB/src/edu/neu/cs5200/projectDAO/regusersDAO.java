@@ -1,6 +1,5 @@
 package edu.neu.cs5200.projectDAO;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -16,31 +15,30 @@ public class regusersDAO {
 	EntityManagerFactory factory = Persistence.createEntityManagerFactory("IBDB");
 	EntityManager em = factory.createEntityManager();
 	
-	private regusers createRegUser(regusers r) {
+	public regusers createRegUser(regusers r) {
 		em.getTransaction().begin();
 		em.persist(r);
 		em.getTransaction().commit();
 		return r;
 	}
 	
-	private regusers readUserByUname(String Uname){
+	public regusers getUserByUname(String Uname){
 		return em.find(regusers.class, Uname);
 	}
 	
-	private List<regusers> readAllUsers(){
+	@SuppressWarnings("unchecked")
+	public List<regusers> getUsers(){
 		Query query = em.createQuery("select r from regusers r");
 		return (List<regusers>) query.getResultList();
 	}
 	
-	private regusers updateRegUsers(regusers r){
+	public void updateRegUsers(regusers r){
 		em.getTransaction().begin();
 		em.merge(r);
 		em.getTransaction().commit();
-		
-		return r;
 	}
 	
-	private void deleteUser(String uname){
+	public void deleteUser(String uname){
 		regusers r = em.find(regusers.class, uname);
 		em.getTransaction().begin();
 		em.remove(r);
@@ -48,51 +46,30 @@ public class regusersDAO {
 		
 	}
 	
-	private boolean isValidUser(String uname, String pwd){
-		Query query = em.createQuery("select r from regusers r where r.username = :uname and r.password = :pwd");
+	public boolean isValidUser(String uname, String pwd) {
+		Query query = em
+				.createQuery("select r from regusers r where r.username = :uname and r.password = :pwd");
 		query.setParameter("uname", uname);
 		query.setParameter("pwd", pwd);
+		@SuppressWarnings("unused")
 		regusers r = new regusers();
-		try{
+		try {
 			r = (regusers) query.getSingleResult();
-		}
-		catch (NoResultException nre){
+		} catch (NoResultException nre) {
 			return false;
 		}
-		
+
 		return true;
 	}
 	
-	public static void main (String args[]) throws IOException
+	public void addToFollowing(regusers v, regusers s)
 	{
-		regusersDAO dao = new regusersDAO();
+		s.getFollowers().add(v);			
+		v.getFollowing().add(s);
 		
-		/*CREATE
-		regusers r = new regusers("sum", "sum", "sumit", "nair", "sumit.nair@gmail.com", "02-01-1990", "8672609367");
-		r = dao.createRegUser(r);
-		System.out.println(r.getEmail());
-		*/
-		
-		/*READ BY UNAME
-		regusers r = dao.readUserByUname("sum");
-		System.out.println(r.getEmail());
-		*/
-		
-		/*READ ALL BY UNAME
-		List <regusers> r = dao.readAllUsers();
-		for(regusers ru : r){
-			System.out.println(ru.getLast_name());
-		}
-		*/
-		
-		/* UPDATE Regusers
-		regusers r = dao.readUserByUname("sum");
-		r.setEmail("changed.email@gmail.com");
-		dao.updateRegUsers(r);
-		*/
-		
-		//dao.deleteUser("sum");
-		System.out.println(dao.isValidUser("sum", "sum"));
+		em.getTransaction().begin();
+		em.merge(s);
+		em.merge(v);
+		em.getTransaction().commit();		
 	}
-
 }

@@ -1,6 +1,6 @@
 package edu.neu.cs5200.projectDAO;
 
-import java.io.IOException;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -8,37 +8,44 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import edu.neu.cs5200.project.book;
 import edu.neu.cs5200.project.comment;
+import edu.neu.cs5200.project.regusers;
 
 public class commentDAO {
 	
 	EntityManagerFactory factory = Persistence.createEntityManagerFactory("IBDB");
 	EntityManager em = factory.createEntityManager();
 	
-	private comment createComment(comment c) {
+	public void createComment(comment c, book b, regusers r)
+	{
+		c.setBks(b);
+		c.setUsers(r);
+		b.getComnt().add(c);
+		r.getComnt().add(c);
 		em.getTransaction().begin();
-		em.persist(c);
-		em.getTransaction().commit();
-		return c;
+		em.merge(b);
+		em.merge(r);
+		em.getTransaction().commit();	
 	}
 	
-	private comment readCommentByID(int id){
+	public comment getCommentByID(int id){
 		return em.find(comment.class, id);
 	}
 	
-	private List<comment> readAllComments(){
+	@SuppressWarnings("unchecked")
+	public List<comment> getComments(){
 		Query query = em.createQuery("select c from comment c");
 		return (List<comment>) query.getResultList();
 	}
 	
-	private comment updateComment(comment c){
+	public void updateComment(comment c){
 		em.getTransaction().begin();
 		em.merge(c);
 		em.getTransaction().commit();	
-		return c;
 	}
 	
-	private void deleteComment(int id){
+	public void deleteComment(int id){
 		comment c = em.find(comment.class, id);
 		em.getTransaction().begin();
 		em.remove(c);
@@ -46,35 +53,4 @@ public class commentDAO {
 		
 	}
 
-	public static void main (String args[]) throws IOException
-	{
-		commentDAO dao = new commentDAO();
-		
-		/*CREATE
-		comment c = new comment(123, "sum", "First comment");
-		c = dao.createComment(c);
-		System.out.println(c.getComment());
-		*/
-		
-		/*READ BY UNAME
-		comment c = dao.readCommentByID(1);
-		System.out.println(c.getComment());
-		*/
-		
-		/*READ ALL BY UNAME
-		List <comment> c = dao.readAllComments();
-		for(comment co : c){
-			System.out.println(co.getComment());
-		}
-		*/
-		
-	    /* UPDATE Regusers
-		comment c = dao.readCommentByID(1);
-		c.setComment("updated comment");
-		dao.updateComment(c);
-		*/
-		
-		dao.deleteComment(1);
-		
-	}
 }

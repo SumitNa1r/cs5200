@@ -1,7 +1,13 @@
 package edu.neu.cs5200.project;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
 @Entity
 public class regusers {
@@ -14,6 +20,23 @@ public class regusers {
 	private String email;
 	private String dob;
 	private String contact;
+	
+	@OneToMany(mappedBy="users")
+	private List<comment> comnt;
+	
+	@OneToMany(mappedBy="usr")
+	private List<comment_author> auth_comnt;
+	
+	@ManyToMany
+	@JoinTable(name = "userlink", joinColumns = { @JoinColumn(name = "following_uname", referencedColumnName = "username") }, inverseJoinColumns = { @JoinColumn(name = "follower_uname", referencedColumnName = "username") })
+	private List<regusers> followers;
+	
+	@ManyToMany(mappedBy = "followers")
+	private List<regusers> following;
+	
+	@OneToMany(mappedBy="usrs")
+	private List<shelf> shlf;
+	
 	
 	public regusers(String username, String password, String first_name,
 			String last_name, String email, String dob, String contact) {
@@ -86,6 +109,45 @@ public class regusers {
 	public void setContact(String contact) {
 		this.contact = contact;
 	}
-	
+
+	public List<comment> getComnt() {
+		return comnt;
+	}
+
+	public void setComnt(List<comment> comnt) {
+		this.comnt = comnt;
+	}
+
+	public List<regusers> getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(List<regusers> followers) {
+		this.followers = followers;
+	}
+
+	public List<regusers> getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(List<regusers> following) {
+		this.following = following;
+	}
+
+	public List<comment_author> getAuth_comnt() {
+		return auth_comnt;
+	}
+
+	public void setAuth_comnt(List<comment_author> auth_comnt) {
+		this.auth_comnt = auth_comnt;
+	}
+
+	public List<shelf> getShlf() {
+		return shlf;
+	}
+
+	public void setShlf(List<shelf> shlf) {
+		this.shlf = shlf;
+	}
 	
 }
