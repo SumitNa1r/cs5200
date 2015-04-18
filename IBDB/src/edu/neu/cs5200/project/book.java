@@ -15,7 +15,6 @@ public class book {
 	@Id
 	private int id;
 	private int likes;
-	private int number_pages;
 	private int publish_year;
 	private String poster;
 	private String description;
@@ -24,6 +23,7 @@ public class book {
 	private int rating_count;
 	private int sum_rating;
 	private int avg_rating;
+	private String name;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="author_id")
@@ -38,17 +38,18 @@ public class book {
 	public book() {
 		super();
 	}
-	public book(int id, int likes, int number_pages, int publish_year,
-			String poster, String description, String publisher, int isbn) {
+
+	public book(int id, int likes, int publish_year, String poster,
+			String description, String publisher, int isbn, String name) {
 		super();
 		this.id = id;
 		this.likes = likes;
-		this.number_pages = number_pages;
 		this.publish_year = publish_year;
 		this.poster = poster;
 		this.description = description;
 		this.publisher = publisher;
 		this.isbn = isbn;
+		this.name = name;
 	}
 	public int getId() {
 		return id;
@@ -62,12 +63,7 @@ public class book {
 	public void setLikes(int likes) {
 		this.likes = likes;
 	}
-	public int getNumber_pages() {
-		return number_pages;
-	}
-	public void setNumber_pages(int number_pages) {
-		this.number_pages = number_pages;
-	}
+
 	public int getPublish_year() {
 		return publish_year;
 	}
@@ -133,6 +129,12 @@ public class book {
 	}
 	public void setShlf(List<shelf> shlf) {
 		this.shlf = shlf;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	
