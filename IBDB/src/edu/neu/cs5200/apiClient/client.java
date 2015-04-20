@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,7 +29,36 @@ import edu.neu.cs5200.project.book;
 
 public class client {
 	public static String GET_BOOK_BY_ID = "https://www.goodreads.com/book/show/BOOK_ID?format=xml&key=X1Gd1Zw1WpqsH8U5WBBdA";
+    public static String GET_BOOK_BY_A_B = "https://www.goodreads.com/search/index.xml?key=X1Gd1Zw1WpqsH8U5WBBdA&q=STRING";
+    public String GET_AUTH_DETAILS = "https://www.goodreads.com/author/show.xml?id=AUTH_ID&key=X1Gd1Zw1WpqsH8U5WBBdA";
 
+	public author getAuthorDetails(int id){
+		String url = GET_AUTH_DETAILS.replace("AUTH_ID",Integer.toString(id));
+		String xml = getXMLFromURLString(url);
+		Document xmlDoc = getDocument(xml);
+		
+		String gender = getData(xmlDoc, "author", "gender");
+		String aurl = getData(xmlDoc, "author", "image_url");
+		String hometown = getData(xmlDoc, "author", "hometown");
+		int work_count = Integer.parseInt(getData(xmlDoc, "author", "works_count"));
+		int followers  = Integer.parseInt(getData(xmlDoc, "author", "author_followers_count"));
+		author a = new author(0, "", hometown, gender, work_count, followers, aurl, id);
+		return a;		
+	}
+    
+    public List<author> findBookByAB(String name) throws UnsupportedEncodingException {
+
+		String encodedUrl = URLEncoder.encode(name, "UTF-8");
+		String url = GET_BOOK_BY_A_B.replace("STRING", encodedUrl);
+
+		String xml = getXMLFromURLString(url);
+		Document xmlDoc = getDocument(xml);
+		int count = Integer.parseInt(getData(xmlDoc, "search", "results-end"));
+		System.out.println(count);
+		return getData(xmlDoc, count, "results");
+
+	}
+	
 	public author findBookById(int id)
 	{
 		String book_url = GET_BOOK_BY_ID.replace("BOOK_ID", Integer.toString(id));
@@ -52,7 +84,6 @@ public class client {
 		int author_id = Integer.parseInt(getData(xmlDoc, "authors", "author", "id"));
 		String auth_url = getData(xmlDoc, "authors", "author", "image_url");
 		String auth_name = getData(xmlDoc, "authors", "author", "name");
-		System.out.println(author_id);
 				
 		author a = new author(0, auth_name, "", "", 0, 0, auth_url, author_id);
 		book b = new book(0, 0 , publish_year, poster, description, publisher, book_isbn, name );
@@ -108,6 +139,26 @@ public class client {
 		return doc;
 	}
 	
+	public List<author> getData(Document doc, int count, String tag){
+		
+		ArrayList<author> au = new ArrayList<author>();
+		NodeList nodes = doc.getElementsByTagName(tag);
+		Element element = (Element) nodes.item(0);
+		for(int i =0; i <count; i++){
+			NodeList work = element.getElementsByTagName("work");
+			Element work_element = (Element) work.item(i);
+			NodeList book = work_element.getElementsByTagName("best_book");
+			Element book_element = (Element) book.item(0);
+			NodeList id = book_element.getElementsByTagName("id");
+			Element id_element = (Element) id.item(0);
+			int book_id = Integer.parseInt(getCharacterDataFromElement(id_element));
+			author a = findBookById(book_id);
+			au.add(a);		
+		}
+		//System.out.println(au.size());
+		return au;
+		
+	}
 	public String getData(Document doc, String initial, String tag){
 		NodeList nodes = doc.getElementsByTagName(initial);
 		Element element = (Element) nodes.item(0);
@@ -151,6 +202,8 @@ public class client {
 	public static void main(String args[]) throws IOException {
 		
 		client api = new client();
-		api.findBookById(50);
+		//api.findBookById(50);
+		//api.findBookByAB("Ender's Game");
+		api.getAuthorDetails(18541);
 	}
 }
