@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,6 +15,7 @@ import javax.persistence.OneToMany;
 public class book {
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	private int likes;
 	private int publish_year;
@@ -31,6 +34,9 @@ public class book {
 	
 	@OneToMany(mappedBy="bks")
 	private List<comment> comnt;
+	
+	@OneToMany(mappedBy="bks")
+	private List<rating> ratings;
 	
 	@OneToMany(mappedBy="boks")
 	private List<shelf> shlf;
@@ -135,6 +141,14 @@ public class book {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<rating> getRatings() {
+		return ratings;
+	}
+
+	public void setRatings(List<rating> ratings) {
+		this.ratings = ratings;
 	}
 	
 	

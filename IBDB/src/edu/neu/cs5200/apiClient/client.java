@@ -26,6 +26,8 @@ import org.w3c.dom.CharacterData;
 
 import edu.neu.cs5200.project.author;
 import edu.neu.cs5200.project.book;
+import edu.neu.cs5200.projectDAO.authorDAO;
+import edu.neu.cs5200.projectDAO.bookDAO;
 
 public class client {
 	public static String GET_BOOK_BY_ID = "https://www.goodreads.com/book/show/BOOK_ID?format=xml&key=X1Gd1Zw1WpqsH8U5WBBdA";
@@ -87,10 +89,17 @@ public class client {
 				
 		author a = new author(0, auth_name, "", "", 0, 0, auth_url, author_id);
 		book b = new book(0, 0 , publish_year, poster, description, publisher, book_isbn, name );
-		b.setAuth(a);
+/*		b.setAuth(a);
 		a.setBooks(new ArrayList<book>());
-		a.getBooks().add(b);
+		a.getBooks().add(b);*/
 		
+		authorDAO ad = new authorDAO();
+		bookDAO bd = new bookDAO();
+		ad.createAuthor(a);
+		
+		author a2 = ad.getAuthorAPI(author_id);
+		bd.createBook(a2, b);
+			
 		return a;
 	}
 
@@ -203,7 +212,7 @@ public class client {
 		
 		client api = new client();
 		//api.findBookById(50);
-		//api.findBookByAB("Ender's Game");
-		api.getAuthorDetails(18541);
+		api.findBookByAB("Ender's Game");
+		//api.getAuthorDetails(18541);
 	}
 }

@@ -39,6 +39,13 @@ public class authorDAO {
 		return a;		
 	}
 		
+	@SuppressWarnings("unchecked")
+	public author getAuthorAPI(int id){
+		Query query = em.createQuery("select a from author a where a.api_id = :id ");
+		query.setParameter("id", id);
+		List<author> a = query.getResultList();
+		return a.get(0);		
+	}
 	public void removeAuthorById(int id){
 		author a = em.find(author.class, id);
 		em.getTransaction().begin();

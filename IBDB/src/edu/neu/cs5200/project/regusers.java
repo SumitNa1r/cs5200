@@ -24,6 +24,9 @@ public class regusers {
 	@OneToMany(mappedBy="users")
 	private List<comment> comnt;
 	
+	@OneToMany(mappedBy="users")
+	private List<rating> ratings;
+	
 	@OneToMany(mappedBy="usr")
 	private List<comment_author> auth_comnt;
 	
@@ -36,6 +39,10 @@ public class regusers {
 	
 	@OneToMany(mappedBy="usrs")
 	private List<shelf> shlf;
+	
+	@ManyToMany
+	@JoinTable(name = "authorlink", joinColumns = { @JoinColumn(name = "username", referencedColumnName = "username") }, inverseJoinColumns = { @JoinColumn(name = "id", referencedColumnName = "author_id") })
+	private List<author> authors;
 	
 	
 	public regusers(String username, String password, String first_name,
@@ -148,6 +155,22 @@ public class regusers {
 
 	public void setShlf(List<shelf> shlf) {
 		this.shlf = shlf;
+	}
+
+	public List<rating> getRatings() {
+		return ratings;
+	}
+
+	public void setRatings(List<rating> ratings) {
+		this.ratings = ratings;
+	}
+
+	public List<author> getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(List<author> authors) {
+		this.authors = authors;
 	}
 	
 }

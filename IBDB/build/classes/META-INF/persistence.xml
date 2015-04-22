@@ -9,6 +9,8 @@
 		<class>edu.neu.cs5200.project.comment</class>
 		<class>edu.neu.cs5200.project.author</class>
 		<class>edu.neu.cs5200.project.book</class>
+		<class>edu.neu.cs5200.project.shelf</class>
+		<class>edu.neu.cs5200.project.comment_author</class>
 		<properties>
 			<property name="eclipselink.jdbc.password" value="sumit" />
 			<property name="eclipselink.jdbc.user" value="root" />
