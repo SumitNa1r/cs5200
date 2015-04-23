@@ -24,7 +24,7 @@ public class regusers {
 	@OneToMany(mappedBy="users")
 	private List<comment> comnt;
 	
-	@OneToMany(mappedBy="users")
+	@OneToMany(mappedBy="user")
 	private List<rating> ratings;
 	
 	@OneToMany(mappedBy="usr")

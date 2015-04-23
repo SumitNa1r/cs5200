@@ -22,6 +22,7 @@ public class author {
 	private int followers;
 	private String url;
 	private int api_id;
+	private String description;
 	
 	@OneToMany(mappedBy="auth")
 	private List<book> books;
@@ -36,7 +37,7 @@ public class author {
 		super();
 	}
 	public author(int id, String name, String hometown, String gender,
-			int work_count, int followers, String url, int api_id) {
+			int work_count, int followers, String url, int api_id, String description) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -46,6 +47,7 @@ public class author {
 		this.followers = followers;
 		this.url = url;
 		this.api_id = api_id;
+		this.description = description;
 	}
 	public int getId() {
 		return id;
@@ -112,6 +114,12 @@ public class author {
 	}
 	public void setFans(List<regusers> fans) {
 		this.fans = fans;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }

@@ -33,7 +33,58 @@ public class client {
 	public static String GET_BOOK_BY_ID = "https://www.goodreads.com/book/show/BOOK_ID?format=xml&key=X1Gd1Zw1WpqsH8U5WBBdA";
     public static String GET_BOOK_BY_A_B = "https://www.goodreads.com/search/index.xml?key=X1Gd1Zw1WpqsH8U5WBBdA&q=STRING";
     public String GET_AUTH_DETAILS = "https://www.goodreads.com/author/show.xml?id=AUTH_ID&key=X1Gd1Zw1WpqsH8U5WBBdA";
-
+    public static String GET_ALL_BOOKS_BY_AUTHOR = "https://www.goodreads.com/author/list/AUTH_GD_ID?format=xml&key=X1Gd1Zw1WpqsH8U5WBBdA";
+    
+    public List<book> getAllBooksByAuthor(int goodReads_id){
+    	String url = GET_ALL_BOOKS_BY_AUTHOR.replace("AUTH_GD_ID", Integer.toString(goodReads_id));
+		String xml = getXMLFromURLString(url);
+    	authorDAO ad = new authorDAO();
+    	author a = ad.getAuthorAPI(goodReads_id);
+		Document xmlDoc = getDocument(xml);
+    	List<book> books = getBooks(xmlDoc, a);
+    	a.getBooks().addAll(books);
+    	ad.updateAuthor(a);   	
+    	return books;
+    }
+    
+    public List<book> getBooks(Document doc, author a){
+    	NodeList nodes = doc.getElementsByTagName("author");
+		Element element = (Element) nodes.item(0);
+		NodeList books = element.getElementsByTagName("books");
+		Element element1 = (Element) books.item(0);
+		
+		//here we will get list of all books
+		NodeList list_books = element1.getElementsByTagName("book");
+		ArrayList<book> bks = new ArrayList<book>();
+		for(int i=0; i < list_books.getLength(); i++)
+		{
+			Element single_book = (Element) list_books.item(i);
+			String name = getTagFromElement(single_book, "title");
+			int book_isbn = Integer.parseInt(getTagFromElement(single_book, "id"));
+			String p_year = getTagFromElement(single_book, "publication_year");
+			int publish_year;
+			if(!p_year.equals(""))
+				publish_year = Integer.parseInt(p_year);
+			else
+				publish_year = 0;
+			String description = getTagFromElement(single_book,"description");
+			description = description.replace("<p>", "");
+			description = description.replace("</p>", "");
+			String poster = getTagFromElement(single_book,"image_url");
+			String publisher = getTagFromElement(single_book,"publisher");
+			book b = new book(0, 0 , publish_year, poster, description, publisher, book_isbn, name );
+			b.setAuth(a);
+			bks.add(b);		
+		}  	
+		return bks;
+    }
+    
+    public String getTagFromElement(Element e, String tag){
+    	NodeList value = e.getElementsByTagName(tag);
+    	Element value1 = (Element) value.item(0);
+    	return getCharacterDataFromElement(value1);	
+    }
+    
 	public author getAuthorDetails(int id){
 		String url = GET_AUTH_DETAILS.replace("AUTH_ID",Integer.toString(id));
 		String xml = getXMLFromURLString(url);
@@ -44,7 +95,7 @@ public class client {
 		String hometown = getData(xmlDoc, "author", "hometown");
 		int work_count = Integer.parseInt(getData(xmlDoc, "author", "works_count"));
 		int followers  = Integer.parseInt(getData(xmlDoc, "author", "author_followers_count"));
-		author a = new author(0, "", hometown, gender, work_count, followers, aurl, id);
+		author a = new author(0, "", hometown, gender, work_count, followers, aurl, id, "");
 		return a;		
 	}
     
@@ -87,7 +138,7 @@ public class client {
 		String auth_url = getData(xmlDoc, "authors", "author", "image_url");
 		String auth_name = getData(xmlDoc, "authors", "author", "name");
 				
-		author a = new author(0, auth_name, "", "", 0, 0, auth_url, author_id);
+		author a = new author(0, auth_name, "", "", 0, 0, auth_url, author_id, "");
 		book b = new book(0, 0 , publish_year, poster, description, publisher, book_isbn, name );
 /*		b.setAuth(a);
 		a.setBooks(new ArrayList<book>());
@@ -212,7 +263,8 @@ public class client {
 		
 		client api = new client();
 		//api.findBookById(50);
-		api.findBookByAB("Ender's Game");
+		//api.findBookByAB("Ender's Game");
 		//api.getAuthorDetails(18541);
+		api.getAllBooksByAuthor(18541);
 	}
 }

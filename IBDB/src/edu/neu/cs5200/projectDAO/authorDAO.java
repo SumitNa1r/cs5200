@@ -60,4 +60,10 @@ public class authorDAO {
 		em.getTransaction().commit();
 	}
 	
+	public void updateAuthor(author a){
+		em.getTransaction().begin();
+		em.merge(a);
+		em.getTransaction().commit();
+	}
+	
 }
